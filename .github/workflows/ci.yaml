@@ -29,11 +29,6 @@ jobs:
         with:
           toolchain: ${{ matrix.rust-version }}
           components: rustfmt, clippy
-
-      - name: Set up Rust
-        uses: actions/setup-rust@v1
-        with:
-          rust-version: 1.44.0
   
       - name: Work around spurious network errors in curl 8.0
         run: |
