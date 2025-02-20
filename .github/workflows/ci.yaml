@@ -30,6 +30,17 @@ jobs:
           toolchain: ${{ matrix.rust-version }}
           components: rustfmt, clippy
 
+      - name: Set up Rust
+        uses: actions/setup-rust@v1
+        with:
+          rust-version: 1.44.0
+  
+      - name: Work around spurious network errors in curl 8.0
+        run: |
+          if rustc --version --verbose | grep -q '^release: 1\.7[01]\.'; then
+            echo "CARGO_HTTP_MULTIPLEXING=false" >> $GITHUB_ENV
+          fi
+
       - name: Cache Cargo Registry & Build Dependencies
         uses: actions/cache@v3
         with:
