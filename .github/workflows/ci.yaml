@@ -2,48 +2,52 @@ name: CI
 
 on:
   push:
-    branches: [ master ]
+    branches: [master]
   pull_request:
-    branches: [ master ]
+    branches: [master]
 
 env:
   CARGO_TERM_COLOR: always
+  CARGO_INCREMENTAL: 0
 
 jobs:
   build:
-
     strategy:
+      fail-fast: false
       matrix:
-        rust-version:
-          - "stable"
-          - "beta"
-          - "nightly"
-          - "1.44.0"
-        api-version:
-          - "v4_3"
-          - "v4_4"
+        rust-version: [stable, beta, nightly, "1.44.0"]
+        api-version: ["v4_3", "v4_4"]
 
     runs-on: ubuntu-latest
 
     steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
 
-      - uses: actions/checkout@v2
-
-      - name: Install Rust ${{ matrix.rust-version }}
-        uses: actions-rs/toolchain@v1
+      - name: Set up Rust ${{ matrix.rust-version }}
+        uses: dtolnay/rust-toolchain@stable
         with:
           toolchain: ${{ matrix.rust-version }}
-          override: true
           components: rustfmt, clippy
 
-      - name: Build
-        uses: actions-rs/cargo@v1
+      - name: Cache Cargo Registry & Build Dependencies
+        uses: actions/cache@v3
         with:
-          command: build
-          args: --features ${{ matrix.api-version }}
+          path: |
+            ~/.cargo/registry
+            ~/.cargo/git
+            target
+          key: cargo-${{ runner.os }}-${{ matrix.rust-version }}-${{ matrix.api-version }}-${{ hashFiles('**/Cargo.lock') }}
+          restore-keys: |
+            cargo-${{ runner.os }}-${{ matrix.rust-version }}-${{ matrix.api-version }}
 
-      - name: Test
-        uses: actions-rs/cargo@v1
-        with:
-          command: test
-          args: --features ${{ matrix.api-version }}
+      - name: Configure Cargo to Use Sparse Index
+        run: |
+          mkdir -p ~/.cargo
+          echo -e '[registry]\ndefault = "sparse"' > ~/.cargo/config.toml
+
+      - name: Build Project
+        run: cargo build --features "${{ matrix.api-version }}"
+
+      - name: Run Tests
+        run: cargo test --features "${{ matrix.api-version }}"
