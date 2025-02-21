@@ -34,7 +34,7 @@ api = ["http", "percent-encoding", "url"]
 v4_2 = [ "k8s-openapi/v1_15" ]
 v4_3 = [ "k8s-openapi/v1_16" ]
 v4_4 = [ "k8s-openapi/v1_17" ]
-v4_5 = [ "k8s-openapi/v1_18" ]
+v4_5 = [ "k8s-openapi/v1_19" ]
 
 [patch.crates-io]
 #k8s-openapi = { git = "https://github.com/Arnavion/k8s-openapi", branch="master" }
