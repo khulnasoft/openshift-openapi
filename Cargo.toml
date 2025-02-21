@@ -34,6 +34,7 @@ api = ["http", "percent-encoding", "url"]
 v4_2 = [ "k8s-openapi/v1_15" ]
 v4_3 = [ "k8s-openapi/v1_16" ]
 v4_4 = [ "k8s-openapi/v1_17" ]
+# Upgraded from v1_18 to v1_19 - Requires Kubernetes >= 1.19
 v4_5 = [ "k8s-openapi/v1_19" ]
 
 [patch.crates-io]
