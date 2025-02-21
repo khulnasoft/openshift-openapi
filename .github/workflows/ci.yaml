@@ -52,6 +52,10 @@ jobs:
           mkdir -p ~/.cargo
           echo -e '[registry]\ndefault = "sparse"' > ~/.cargo/config.toml
 
+      - name: Retry Fetching Registry on Failure
+        run: |
+          for i in {1..5}; do cargo fetch && break || sleep 15; done
+
       - name: Build Project
         run: cargo build --features "${{ matrix.api-version }}"
 
